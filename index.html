@@ -1,0 +1,133 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="manifest" href="site.webmanifest">
+    <link rel="apple-touch-icon" href="icon.png">
+    <!-- Place favicon.ico in the root directory -->
+    <!-- 
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/main.css"> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <meta name="theme-color" content="#fafafa">
+</head>
+
+<body>
+    <!--[if IE]>
+    <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+  <![endif]-->
+
+    <!-- Add your site or application content here -->
+    <p>Hello world! This is HTML5 Boilerplate.</p>
+    <!-- <script src="js/vendor/modernizr-{{MODERNIZR_VERSION}}.min.js"></script>
+    <script src="https://code.jquery.com/jquery-{{JQUERY_VERSION}}.min.js" integrity="{{JQUERY_SRI_HASH}}"
+        crossorigin="anonymous"></script>
+    <script>
+        window.jQuery || document.write('<script src="js/vendor/jquery-{{JQUERY_VERSION}}.min.js"><\/script>')
+    </script> -->
+
+
+    <!-- Google Analytics: change UA-XXXXX-Y to be your site's ID. -->
+    <script>
+        window.ga = function () {
+            ga.q.push(arguments)
+        };
+        ga.q = [];
+        ga.l = +new Date;
+        ga('create', 'UA-XXXXX-Y', 'auto');
+        ga('set', 'transport', 'beacon');
+        ga('send', 'pageview')
+    </script>
+    <script src="https://www.google-analytics.com/analytics.js" async></script>
+    <script>
+        $.get('gtbank.txt', function (data) {
+            var splitData = data.split('\n');
+            var arr = [];
+            splitData.forEach((element) => {
+                // console.log(element); 
+
+
+                // console.log(getTransaction(element));
+                // console.log(getAccountNumber(element));
+                // console.log(getDateTime(element));
+
+            });
+            // console.log(arr);
+        }, 'text');
+
+        var getDateTime = (str) => {
+            // formula for getting content in between brackets
+            var from = str.indexOf('[');
+            var to = str.indexOf(']');
+            var _date = str.substr(from + 1, to - from - 1).split(' ')[0];
+            var _time = str.substr(from + 1, to - from - 1).split(' ')[1];
+
+            const result = {
+                date: _date,
+                time: _time
+            }
+            if (result.date !== '' && result.time !== undefined) {
+                return result;
+            } else
+                return false;
+        }
+
+        var getAccountNumber = (str) => {
+            var index = str.indexOf('Acct:');
+
+            if (index !== -1) {
+                var from = index + 6;
+                var to = from + 9;
+                var res = str.substr(from, to);
+                var _accountNumber = Number(res);
+                const result = {
+                    accountNumber: _accountNumber
+                };
+
+                if (!Number.isNaN(_accountNumber))
+                    return result;
+
+                return false;
+            }
+            return false;
+        }
+
+        var getTransaction = (str) => {
+            var index = str.indexOf('Amt:');
+
+            if (index !== -1) {
+                var from = index + 5;
+                var transactionInfoRow = str.substr(from);
+                var transactionAmount = parseFloat(transactionInfoRow.substr(0, transactionInfoRow.indexOf(' ')).replace(/,/g, ''));
+                var transactionTypeIndex = transactionInfoRow.indexOf(' ');
+                var transactionTypeInfo = transactionInfoRow.substr(transactionTypeIndex);
+                var transactionType = transactionTypeInfo.substr(0,3); 
+                var commissionIndex = transactionTypeInfo.indexOf(' ,C') + 12;
+                var commissionAmount = Number(transactionTypeInfo.substr(commissionIndex));
+                const result = {
+                    amount: transactionAmount, 
+                    type: transactionType, 
+                    commission: commissionAmount
+                }
+                return result; 
+                // if (!Number.isNaN(_accountNumber))
+                //     return result;
+
+                // return false;
+            }
+            return false;
+        }
+
+
+        // var getDescription 
+        // var getBalance
+    </script>
+</body>
+
+</html>
