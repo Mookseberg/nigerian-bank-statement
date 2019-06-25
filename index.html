@@ -52,9 +52,8 @@
             splitData.forEach((element) => {
                 // should split everything on a new line again 
                 // console.log(str.split('\n')[0])
-                console.log(getDescription(element)); 
-
-
+                console.log(getBalance(element));
+                // console.log(getDescription(element)); 
                 // console.log(getTransaction(element));
                 // console.log(getAccountNumber(element));
                 // console.log(getDateTime(element));
@@ -106,37 +105,49 @@
             if (index !== -1) {
                 var from = index + 5;
                 var transactionInfoRow = str.substr(from);
-                var transactionAmount = parseFloat(transactionInfoRow.substr(0, transactionInfoRow.indexOf(' ')).replace(/,/g, ''));
+                var transactionAmount = parseFloat(transactionInfoRow.substr(0, transactionInfoRow.indexOf(' '))
+                    .replace(/,/g, ''));
                 var transactionTypeIndex = transactionInfoRow.indexOf(' ');
                 var transactionTypeInfo = transactionInfoRow.substr(transactionTypeIndex);
-                var transactionType = transactionTypeInfo.substr(0,3); 
+                var transactionType = transactionTypeInfo.substr(0, 3);
                 var commissionIndex = transactionTypeInfo.indexOf(' ,C') + 12;
                 var commissionAmount = Number(transactionTypeInfo.substr(commissionIndex));
                 const result = {
-                    amount: transactionAmount, 
-                    type: transactionType, 
+                    amount: transactionAmount,
+                    type: transactionType,
                     commission: commissionAmount
                 }
-                return result; 
-                // if (!Number.isNaN(_accountNumber))
-                //     return result;
-
-                // return false;
+                return result;
             }
             return false;
         }
 
         var getDescription = (str) => {
-            var index = str.indexOf('Desc:'); 
+            var index = str.indexOf('Desc:');
             if (index !== -1) {
-                var from = index + 5; 
-                var end = str.indexOf('\n');
-                var descInfoRow = str.substr(from, end); 
-                console.log(descInfoRow.replace(/-/g, '')); 
+                var from = index + 5;
+                var descInfoRow = str.substr(from);
+                var _description = descInfoRow.replace(/-/g, '');
+                const result = {
+                    description: _description
+                }
+                return result;
             }
-            return false; 
+            return false;
         }
-        // var getBalance
+
+        var getBalance = (str) => {
+            var index = str.indexOf('Avail Bal:');
+            if (index !== -1) {
+                var from = index + 11;
+                var _balance = Number(str.substr(from));
+                const result = {
+                    balance: _balance
+                }
+                return result;
+            }
+            return false;
+        }
     </script>
 </body>
 
