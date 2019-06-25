@@ -50,7 +50,9 @@
             var splitData = data.split('\n');
             var arr = [];
             splitData.forEach((element) => {
-                // console.log(element); 
+                // should split everything on a new line again 
+                // console.log(str.split('\n')[0])
+                console.log(getDescription(element)); 
 
 
                 // console.log(getTransaction(element));
@@ -124,8 +126,16 @@
             return false;
         }
 
-
-        // var getDescription 
+        var getDescription = (str) => {
+            var index = str.indexOf('Desc:'); 
+            if (index !== -1) {
+                var from = index + 5; 
+                var end = str.indexOf('\n');
+                var descInfoRow = str.substr(from, end); 
+                console.log(descInfoRow.replace(/-/g, '')); 
+            }
+            return false; 
+        }
         // var getBalance
     </script>
 </body>
