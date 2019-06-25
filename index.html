@@ -52,14 +52,14 @@
             splitData.forEach((element) => {
                 // should split everything on a new line again 
                 // console.log(str.split('\n')[0])
-                console.log(getBalance(element));
-                // console.log(getDescription(element)); 
-                // console.log(getTransaction(element));
-                // console.log(getAccountNumber(element));
-                // console.log(getDateTime(element));
-
+                arr.push(getDataAttributes(element));
             });
-            // console.log(arr);
+
+            // var res = splitData.map( element => {
+            //     return element.split('\n'); 
+            // })
+            console.log(arr);
+
         }, 'text');
 
         var getDateTime = (str) => {
@@ -78,6 +78,7 @@
             } else
                 return false;
         }
+
 
         var getAccountNumber = (str) => {
             var index = str.indexOf('Acct:');
@@ -147,6 +148,56 @@
                 return result;
             }
             return false;
+        }
+
+        var getDataAttributes = (str) => {
+            const result = {
+                accountNumber: '',
+                date: '',
+                time: '',
+                transactionAmount: '',
+                transactionType: '',
+                commission: '',
+                description: '',
+                remainingBalance: ''
+            }
+
+            // get date time
+            var dtFrom = str.indexOf('[');
+            var dtTo = str.indexOf(']');
+            var _date = str.substr(dtFrom + 1, dtTo - dtFrom - 1).split(' ')[0];
+            var _time = str.substr(dtFrom + 1, dtTo - dtFrom - 1).split(' ')[1];
+
+            // get account number
+            var accountIndex = str.indexOf('Acct:');
+            if (accountIndex !== -1) {
+                var from = accountIndex + 6;
+                var to = from + 9;
+                var res = str.substr(from, to);
+                var _accountNumber = Number(res);
+            }
+
+            // get transaction info
+            var ammountIndex = str.indexOf('Amt:');
+            if (ammountIndex !== -1) {
+                var from = ammountIndex + 5;
+                var transactionInfoRow = str.substr(from);
+                var transactionAmount = parseFloat(transactionInfoRow.substr(0, transactionInfoRow.indexOf(' '))
+                    .replace(/,/g, ''));
+                var transactionTypeIndex = transactionInfoRow.indexOf(' ');
+                var transactionTypeInfo = transactionInfoRow.substr(transactionTypeIndex);
+                var transactionType = transactionTypeInfo.substr(0, 3);
+                var commissionIndex = transactionTypeInfo.indexOf(' ,C') + 12;
+                var commissionAmount = Number(transactionTypeInfo.substr(commissionIndex));
+            }
+
+            result.date = _date; 
+            result.time = _time; 
+            result.accountNumber = _accountNumber; 
+            result.transactionAmount = transactionAmount; 
+
+            return result;
+            // console.log(result); 
         }
     </script>
 </body>
