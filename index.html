@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/main.css"> -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/x.y.z/underscore-min.js"></script> -->
     <meta name="theme-color" content="#fafafa">
 </head>
 
@@ -54,10 +54,14 @@
             });
 
             var filtered = arr.filter(function (el) { // remove undefined and empty 
-                return el;
+                // console.log(el[1])
+                if (el[1] === undefined || el[1] === '' || el[1] !== el[1]) {
+
+                } else
+                    return el;
             });
 
-            console.log(filtered);
+            console.log(mapTransactionData(filtered));
 
         }, 'text');
 
@@ -160,17 +164,6 @@
                 remainingBalance: ''
             }
 
-            // var from = '';
-            // var transactionInfoRow = '';
-            // var transactionAmount = '';
-            // var transactionTypeIndex = '';
-            // var transactionTypeInfo = '';
-            // var transactionType = '';
-            // var commissionIndex = '';
-            // var commissionAmount = '';
-            // var ammountIndex = ''
-
-
             // get date time
             var dtFrom = str.indexOf('[');
             var dtTo = str.indexOf(']');
@@ -200,29 +193,49 @@
                 var commissionAmount = Number(transactionTypeInfo.substr(commissionIndex));
             }
 
-            var index = str.indexOf('Desc:');
-            if (index !== -1) {
-                var from = index + 5;
+            var descriptionIndex = str.indexOf('Desc:');
+            if (descriptionIndex !== -1) {
+                var from = descriptionIndex + 5;
                 var descInfoRow = str.substr(from);
                 var _description = descInfoRow.replace(/-/g, '');
             }
 
+            var balanceIndex = str.indexOf('Avail Bal:');
+            if (balanceIndex !== -1) {
+                var from = balanceIndex + 11;
+                var _balance = parseFloat(str.substr(from).replace(/,/g, ''));
+            }
 
-            arr.push(_date);
-            arr.push(_time);
-            arr.push(_accountNumber);
-            arr.push(transactionAmount);
-            arr.push(transactionType);
-            arr.push(commissionAmount);
-            arr.push(_description);
+            arr.push(['date', _date]);
+            arr.push(['time', _time]);
+            arr.push(['account number', _accountNumber]);
+            arr.push(['amount', transactionAmount]);
+            arr.push(['type', transactionType]);
+            arr.push(['commission', commissionAmount]);
+            arr.push(['description', _description]);
+            arr.push(['balance', _balance]);
+        }
 
-            // result.transactionAmount = transactionAmount;
-            // result.date = _date;
-            // result.time = _time;
-            // result.accountNumber = _accountNumber;
-            // result.description = _description;
+        var mapTransactionData = (arr) => {
+            var transactionObj = {};
+            var mappedData = [];
+            arr.map(transaction => {
+                var key = transaction[0];
+                var value = transaction[1];
 
-            // console.log(result); 
+                transactionObj[key] = value;
+                if (key === 'balance') {
+                    mappedData.push(transactionObj);
+                    transactionObj = {};
+                }
+            });
+            return mappedData;
+        }
+
+        var isDate = (val) => {
+            var d = new Date(val);
+            // ensure the date is an actual date and not an amount
+            return (!Number(val) && d instanceof Date && !isNaN(d.valueOf()));
         }
     </script>
 </body>
