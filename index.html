@@ -50,15 +50,14 @@
             var splitData = data.split('\n');
             var arr = [];
             splitData.forEach((element) => {
-                // should split everything on a new line again 
-                // console.log(str.split('\n')[0])
-                arr.push(getDataAttributes(element));
+                getDataAttributes(element, arr);
             });
 
-            // var res = splitData.map( element => {
-            //     return element.split('\n'); 
-            // })
-            console.log(arr);
+            var filtered = arr.filter(function (el) { // remove undefined and empty 
+                return el;
+            });
+
+            console.log(filtered);
 
         }, 'text');
 
@@ -78,7 +77,6 @@
             } else
                 return false;
         }
-
 
         var getAccountNumber = (str) => {
             var index = str.indexOf('Acct:');
@@ -150,7 +148,7 @@
             return false;
         }
 
-        var getDataAttributes = (str) => {
+        var getDataAttributes = (str, arr) => {
             const result = {
                 accountNumber: '',
                 date: '',
@@ -161,6 +159,17 @@
                 description: '',
                 remainingBalance: ''
             }
+
+            // var from = '';
+            // var transactionInfoRow = '';
+            // var transactionAmount = '';
+            // var transactionTypeIndex = '';
+            // var transactionTypeInfo = '';
+            // var transactionType = '';
+            // var commissionIndex = '';
+            // var commissionAmount = '';
+            // var ammountIndex = ''
+
 
             // get date time
             var dtFrom = str.indexOf('[');
@@ -191,12 +200,28 @@
                 var commissionAmount = Number(transactionTypeInfo.substr(commissionIndex));
             }
 
-            result.date = _date; 
-            result.time = _time; 
-            result.accountNumber = _accountNumber; 
-            result.transactionAmount = transactionAmount; 
+            var index = str.indexOf('Desc:');
+            if (index !== -1) {
+                var from = index + 5;
+                var descInfoRow = str.substr(from);
+                var _description = descInfoRow.replace(/-/g, '');
+            }
 
-            return result;
+
+            arr.push(_date);
+            arr.push(_time);
+            arr.push(_accountNumber);
+            arr.push(transactionAmount);
+            arr.push(transactionType);
+            arr.push(commissionAmount);
+            arr.push(_description);
+
+            // result.transactionAmount = transactionAmount;
+            // result.date = _date;
+            // result.time = _time;
+            // result.accountNumber = _accountNumber;
+            // result.description = _description;
+
             // console.log(result); 
         }
     </script>
