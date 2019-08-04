@@ -53,16 +53,25 @@
                 getDataAttributes(element, arr);
             });
 
-            var filtered = arr.filter(function (el) { // remove undefined and empty 
-                // console.log(el[1])
+            var filtered = arr.filter(function (el) { // remove undefined, NaNs, and empty data
                 if (el[1] === undefined || el[1] === '' || el[1] !== el[1]) {
-
+                    // do nothing
                 } else
                     return el;
             });
 
-            console.log(mapTransactionData(filtered));
+            var mappedData = mapTransactionData(filtered);
+            var sortedData = mappedData;
+            // sortedData.sort((a, b) => b.date.localeCompare(a.date));
 
+            sortedData.sort(function compare(a, b) {
+                var dateA = new Date(a.date);
+                var dateB = new Date(b.date);
+                return dateA - dateB;
+            });
+            var str = JSON.stringify(sortedData);
+
+            $('body').append(str)
         }, 'text');
 
         var getDateTime = (str) => {
